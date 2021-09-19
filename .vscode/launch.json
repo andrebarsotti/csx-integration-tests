@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Script Debug",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${env:HOME}/.dotnet/tools/dotnet-script",
+      "args": ["${file}"],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+    }
+  ]
+}
