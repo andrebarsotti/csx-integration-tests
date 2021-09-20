@@ -6,7 +6,10 @@
       "type": "coreclr",
       "request": "launch",
       "program": "${env:HOME}/.dotnet/tools/dotnet-script",
-      "args": ["${file}"],
+      "args": [
+          "--isolated-load-context",
+          "${file}"
+        ],
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
     }
