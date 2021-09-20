@@ -1,4 +1,4 @@
-namespace TodoListRepository.Model
+namespace TodoListRepositories.Model
 {
     public class TodoTask
     {

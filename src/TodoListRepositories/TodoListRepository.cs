@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Dapper;
-using TodoListRepository.Model;
+using TodoListRepositories.Model;
 
-namespace TodoListRepository.Data
+namespace TodoListRepositories.Data
 {
     public class TodoListRepository: ITodoListRepository, IDisposable
     {

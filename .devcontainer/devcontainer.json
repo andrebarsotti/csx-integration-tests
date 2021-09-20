@@ -31,7 +31,8 @@
 		"jongrant.csharpsortusings",
 		"fudge.auto-using",
 		"vscode-icons-team.vscode-icons",
-		"adrianwilczynski.user-secrets"
+		"adrianwilczynski.user-secrets",
+		"formulahendry.dotnet"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

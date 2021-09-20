@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TodoListRepository.Model;
+using TodoListRepositories.Model;
 
-namespace TodoListRepository.Data
+namespace TodoListRepositories.Data
 {
     public interface ITodoListRepository
     {
