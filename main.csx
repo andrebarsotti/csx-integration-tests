@@ -9,13 +9,13 @@
 #r "src/TodoListRepositories/bin/Debug/net5.0/TodoListRepository.dll"
 using static ScriptUnit;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Bogus;
 using FluentAssertions;
 using TodoListRepositories.Data;
 using TodoListRepositories.Model;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using Bogus;
 
 return await AddTestsFrom<TodoListRepositoryTests>().Execute();
 
