@@ -44,6 +44,57 @@ public class TodoListRepositoryTests
                         .Should()
                         .ShouldBeEquivalentTo(task, opt => opt.ExcludingMissingMembers());
     }
+
+    public async Task UpdateTask_Success()
+    {
+        // Setup
+        using TodoTaskContext context = new();
+        string locator = _faker.Random.AlphaNumeric(5);
+        context.TodoTask.Add(new TodoTaskEntity{
+            Locator = locator,
+            Title = _faker.Lorem.Sentence(5),
+            Done = _faker.Random.Bool()
+        });
+        context.SaveChanges();
+
+        TodoTask task = new()
+        {
+            Locator = locator,
+            Title = _faker.Lorem.Sentence(7),
+            Done = true
+        };
+
+        //Execute
+        using var repo = new TodoListRepository(Configs.Configuration.GetConnectionString("db"));
+        await repo.UpdateTask(task);
+
+        //Validate
+        context.TodoTask.FirstOrDefault(t => t.Locator == task.Locator)
+                        .Should()
+                        .ShouldBeEquivalentTo(task, opt => opt.ExcludingMissingMembers());
+    }
+
+    public async Task DeleteTask_Success()
+    {
+        // Setup
+        using TodoTaskContext context = new();
+        string locator = _faker.Random.AlphaNumeric(5);
+        context.TodoTask.Add(new TodoTaskEntity{
+            Locator = locator,
+            Title = _faker.Lorem.Sentence(5),
+            Done = _faker.Random.Bool()
+        });
+        context.SaveChanges();
+
+        //Execute
+        using var repo = new TodoListRepository(Configs.Configuration.GetConnectionString("db"));
+        await repo.DeleteTask(locator);
+
+        //Validate
+        context.TodoTask.Any(task => task.Locator == locator)
+                        .Should()
+                        .BeFalse();
+    }
 }
 
 
