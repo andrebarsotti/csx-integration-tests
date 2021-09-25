@@ -50,7 +50,6 @@ Para a execução desse projeto é preciso ter instalado:
     dotnet tool install -g dotnet-script
     ~~~
 
-
 ## 4. Execução
 
 Para executar o script basta rodar o comando abaixo na raiz do projeto:
@@ -70,12 +69,10 @@ Test Run Successful.
 Test execution time 1.9674748 seconds
 ~~~
 
-
 ## Referências
 
-FOWLER, Martin. IntegrationTest. martimFowler.com, 2018. Disponível em <[https://martinfowler.com/bliki/IntegrationTest.html](https://martinfowler.com/bliki/IntegrationTest.html)>. Acesso em: 25-09-2021
+FOWLER, Martin. IntegrationTest. martimFowler.com, 2018. Disponível em <<https://martinfowler.com/bliki/IntegrationTest.html>>. Acesso em: 25-09-2021
 
-RICHTER, Bernhard. ScriptUnit. Github, 2018. Disponível em <[https://github.com/seesharper/ScriptUnit]>(https://github.com/seesharper/ScriptUnit)>. Acesso em: 25-09-2021
+RICHTER, Bernhard. ScriptUnit. Github, 2018. Disponível em <<https://github.com/seesharper/ScriptUnit>>. Acesso em: 25-09-2021
 
-
-WOJCIESZYN, Filip. Dotnet script. Github, 2021. Disponível em <[https://github.com/filipw/dotnet-script](https://github.com/filipw/dotnet-script)>. Acesso em: 11-09-2021
+WOJCIESZYN, Filip. Dotnet script. Github, 2021. Disponível em <<https://github.com/filipw/dotnet-script>>. Acesso em: 11-09-2021
