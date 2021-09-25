@@ -16,12 +16,21 @@ using Bogus;
 using FluentAssertions;
 using TodoListRepositories.Data;
 using TodoListRepositories.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 return await AddTestsFrom<TodoListRepositoryTests>().Execute();
 
-public class TodoListRepositoryTests
+public class TodoListRepositoryTests : IDisposable
 {
     private readonly Faker _faker = new();
+    private bool _disposedValue;
+    private TodoTaskContext _context;
+
+    public TodoListRepositoryTests()
+    {
+        _context = new();
+        _context.Database.EnsureCreated();
+    }
 
     public async Task AddTask_Success()
     {
@@ -37,10 +46,9 @@ public class TodoListRepositoryTests
         using var repo = new TodoListRepository(Configs.Configuration.GetConnectionString("db"));
         await repo.AddTask(task);
 
-        // Check
-        using TodoTaskContext context = new();
-        context.TodoTask.Any(t => t.Locator == task.Locator).Should().BeTrue();
-        context.TodoTask.FirstOrDefault(t => t.Locator == task.Locator)
+        // Validate
+        _context.TodoTask.Any(t => t.Locator == task.Locator).Should().BeTrue();
+        _context.TodoTask.FirstOrDefault(t => t.Locator == task.Locator)
                         .Should()
                         .ShouldBeEquivalentTo(task, opt => opt.ExcludingMissingMembers());
     }
@@ -48,14 +56,13 @@ public class TodoListRepositoryTests
     public async Task UpdateTask_Success()
     {
         // Setup
-        using TodoTaskContext context = new();
         string locator = _faker.Random.AlphaNumeric(5);
-        context.TodoTask.Add(new TodoTaskEntity{
+        _context.TodoTask.Add(new TodoTaskEntity{
             Locator = locator,
             Title = _faker.Lorem.Sentence(5),
             Done = _faker.Random.Bool()
         });
-        context.SaveChanges();
+        _context.SaveChanges();
 
         TodoTask task = new()
         {
@@ -69,7 +76,7 @@ public class TodoListRepositoryTests
         await repo.UpdateTask(task);
 
         //Validate
-        context.TodoTask.FirstOrDefault(t => t.Locator == task.Locator)
+        _context.TodoTask.FirstOrDefault(t => t.Locator == task.Locator)
                         .Should()
                         .ShouldBeEquivalentTo(task, opt => opt.ExcludingMissingMembers());
     }
@@ -77,34 +84,67 @@ public class TodoListRepositoryTests
     public async Task DeleteTask_Success()
     {
         // Setup
-        using TodoTaskContext context = new();
         string locator = _faker.Random.AlphaNumeric(5);
-        context.TodoTask.Add(new TodoTaskEntity{
+        _context.TodoTask.Add(new TodoTaskEntity{
             Locator = locator,
             Title = _faker.Lorem.Sentence(5),
             Done = _faker.Random.Bool()
         });
-        context.SaveChanges();
+        _context.SaveChanges();
 
         //Execute
         using var repo = new TodoListRepository(Configs.Configuration.GetConnectionString("db"));
         await repo.DeleteTask(locator);
 
         //Validate
-        context.TodoTask.Any(task => task.Locator == locator)
+        _context.TodoTask.Any(task => task.Locator == locator)
                         .Should()
                         .BeFalse();
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+            _context = null;
+            _disposedValue = true;
+        }
+    }
+
+    ~TodoListRepositoryTests()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: false);
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }
 
 
-[Table("TodoTask")]
 public class TodoTaskEntity : TodoTask
 {
-    [Key]
-    public Guid Id { get; set; }
+    public virtual Guid Id { get; set; }
 }
 
+
+public class TodoTaskEntityConfiguration : IEntityTypeConfiguration<TodoTaskEntity>
+{
+    public void Configure(EntityTypeBuilder<TodoTaskEntity> builder)
+    {
+        builder.HasKey(e => e.Id);
+        builder.HasIndex(e => e.Locator).IsUnique();
+        builder.Property(e => e.Id).IsRequired().HasDefaultValueSql("NEWSEQUENTIALID()");
+        builder.Property(e => e.Locator).IsRequired().HasMaxLength(10);
+        builder.Property(e => e.Title).IsRequired().HasMaxLength(256);;
+    }
+}
 
 public class TodoTaskContext: DbContext
 {
@@ -113,4 +153,9 @@ public class TodoTaskContext: DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlServer(Configs.Configuration.GetConnectionString("db"));
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new TodoTaskEntityConfiguration());
+    }
 }
